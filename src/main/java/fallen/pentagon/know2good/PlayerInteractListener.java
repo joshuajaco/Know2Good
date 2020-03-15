@@ -39,8 +39,10 @@ public class PlayerInteractListener implements Listener {
       ConfigurationSection itemConfig = itemsConfig.getConfigurationSection(key);
 
       if (itemConfig == null) return;
+      String name = itemConfig.getString("name");
+      if (name == null) return;
 
-      if (meta.getDisplayName().equals(itemConfig.getString("name"))) {
+      if (meta.getDisplayName().contains(name)) {
         event.setCancelled(true);
 
         itemConfig
