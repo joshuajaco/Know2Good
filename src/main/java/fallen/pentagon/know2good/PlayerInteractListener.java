@@ -46,7 +46,7 @@ public class PlayerInteractListener implements Listener {
         itemConfig
           .getStringList("commands")
           .stream()
-          .map(cmd -> cmd.replace("{{player}}", player.getDisplayName()))
+          .map(cmd -> cmd.replace("{{player}}", player.getName()))
           .forEach(cmd -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd));
 
         if (itemConfig.getBoolean("consume")) {
