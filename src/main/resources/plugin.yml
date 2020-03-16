@@ -6,4 +6,4 @@ commands:
   reload:
     usage: /know2good:reload
     permission: know2good.reload
-    permission-message: You don't permission for that.
+    permission-message: You don't have permission for that.
