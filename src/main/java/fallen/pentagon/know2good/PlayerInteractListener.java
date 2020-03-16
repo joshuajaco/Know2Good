@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -23,7 +24,11 @@ public class PlayerInteractListener implements Listener {
 
     Player player = event.getPlayer();
     PlayerInventory inventory = player.getInventory();
-    ItemStack item = inventory.getItem(inventory.getHeldItemSlot());
+    EquipmentSlot hand = event.getHand();
+
+    if (hand == null) return;
+
+    ItemStack item = inventory.getItem(hand);
 
     if (item == null) return;
 
