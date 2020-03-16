@@ -8,6 +8,7 @@ public class Know2Good extends JavaPlugin {
   @Override
   public void onEnable() {
     getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
+    getServer().getPluginManager().registerEvents(new PlayerItemConsumeListener(this), this);
     getConfig().options().copyDefaults(true);
     saveConfig();
   }

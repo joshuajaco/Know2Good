@@ -4,33 +4,20 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class PlayerInteractListener implements Listener {
+public class PlayerItemConsumeListener implements Listener {
   private final Know2Good plugin;
 
-  public PlayerInteractListener(Know2Good plugin) {
+  public PlayerItemConsumeListener(Know2Good plugin) {
     this.plugin = plugin;
   }
 
   @EventHandler
-  public void onPlayerInteract(PlayerInteractEvent event) {
-    if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_AIR) return;
-
-    Player player = event.getPlayer();
-    PlayerInventory inventory = player.getInventory();
-    EquipmentSlot hand = event.getHand();
-
-    if (hand == null) return;
-
-    ItemStack item = inventory.getItem(hand);
-
-    if (item == null) return;
+  public void onPlayerInteract(PlayerItemConsumeEvent event) {
+    ItemStack item = event.getItem();
 
     ItemMeta meta = item.getItemMeta();
 
@@ -40,20 +27,20 @@ public class PlayerInteractListener implements Listener {
 
     if (itemsConfig == null) return;
 
+    Player player = event.getPlayer();
+
     itemsConfig.getKeys(false).forEach(key -> {
       ConfigurationSection itemConfig = itemsConfig.getConfigurationSection(key);
 
       if (itemConfig == null) return;
 
       String trigger = itemConfig.getString("trigger");
-      if (trigger == null || !trigger.equals("right_click")) return;
+      if (trigger == null || !trigger.equals("eat")) return;
 
       String name = itemConfig.getString("name");
       if (name == null) return;
 
       if (meta.getDisplayName().contains(name)) {
-        event.setCancelled(true);
-
         itemConfig
           .getStringList("commands")
           .stream()
