@@ -34,7 +34,7 @@ public class PlayerInteractListener implements Listener {
 
     ItemMeta meta = item.getItemMeta();
 
-    if (!meta.isUnbreakable()) return;
+    if (meta == null || !meta.isUnbreakable()) return;
 
     ConfigurationSection itemsConfig = plugin.getConfig().getConfigurationSection("items");
 
