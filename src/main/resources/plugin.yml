@@ -1,7 +1,7 @@
 main: fallen.pentagon.know2good.Know2Good
 name: Know2Good
-version: "0.3.1-SNAPSHOT"
-api-version: "1.15"
+version: "0.4.0-SNAPSHOT"
+api-version: "1.16"
 commands:
   reload:
     usage: /know2good:reload
