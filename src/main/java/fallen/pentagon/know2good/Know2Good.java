@@ -21,10 +21,12 @@ public class Know2Good extends JavaPlugin {
         overWorld.getPlayers().forEach(player -> {
           var location = player.getLocation();
           if (location.getBlockY() > 320) {
+            var velocity = player.getVelocity().clone();
             var newLocation = location.clone();
             newLocation.setWorld(end);
             newLocation.setY(10);
             player.teleport(newLocation);
+            player.setVelocity(velocity);
             player.sendMessage("Teleported to end");
           }
         });
@@ -32,10 +34,12 @@ public class Know2Good extends JavaPlugin {
         end.getPlayers().forEach(player -> {
           var location = player.getLocation();
           if (location.getBlockY() < -5) {
+            var velocity = player.getVelocity().clone();
             var newLocation = location.clone();
             newLocation.setWorld(overWorld);
             newLocation.setY(320);
             player.teleport(newLocation);
+            player.setVelocity(velocity);
             player.sendMessage("Teleported to overworld");
           }
         });
