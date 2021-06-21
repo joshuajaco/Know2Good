@@ -1,11 +1,7 @@
 teleport:
   check_every_n_ticks: 20
-  overworld_to_end:
-    from: 330
-    to: 5
-  end_to_overworld:
-    from: -5
-    to: 320
+  overworld_anchor: 350
+  end_anchor: -25
 items:
   spawn_pearl:
     trigger: right_click

@@ -14,31 +14,20 @@ public class WorldTeleporter {
     if (teleportConfig == null) return;
 
     var checkEvery = teleportConfig.getLong("check_every_n_ticks");
-
-    var overWorldConfig = teleportConfig.getConfigurationSection("overworld_to_end");
-
-    if (overWorldConfig == null) return;
-
-    var overWorldFrom = overWorldConfig.getInt("from");
-    var overWorldTo = overWorldConfig.getInt("to");
-
-    var endConfig = teleportConfig.getConfigurationSection("end_to_overworld");
-
-    if (endConfig == null) return;
-
-    var endFrom = endConfig.getInt("from");
-    var endTo = endConfig.getInt("to");
+    var overWorldAnchor = teleportConfig.getInt("overworld_anchor");
+    var endAnchor = teleportConfig.getInt("end_anchor");
 
     var overWorld = plugin.getServer().getWorlds().get(0);
     var end = plugin.getServer().getWorlds().get(2);
+
     taskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
       overWorld.getPlayers().forEach(player -> {
         var location = player.getLocation();
-        if (location.getBlockY() > overWorldFrom) {
+        if (location.getBlockY() > overWorldAnchor) {
           var velocity = player.getVelocity().clone();
           var newLocation = location.clone();
           newLocation.setWorld(end);
-          newLocation.setY(overWorldTo);
+          newLocation.setY(endAnchor + (location.getBlockY() - overWorldAnchor));
           player.teleport(newLocation);
           player.setVelocity(velocity);
         }
@@ -46,11 +35,11 @@ public class WorldTeleporter {
 
       end.getPlayers().forEach(player -> {
         var location = player.getLocation();
-        if (location.getBlockY() < endFrom) {
+        if (location.getBlockY() < endAnchor) {
           var velocity = player.getVelocity().clone();
           var newLocation = location.clone();
           newLocation.setWorld(overWorld);
-          newLocation.setY(endTo);
+          newLocation.setY(overWorldAnchor - (endAnchor - location.getBlockY()));
           player.teleport(newLocation);
           player.setVelocity(velocity);
         }
