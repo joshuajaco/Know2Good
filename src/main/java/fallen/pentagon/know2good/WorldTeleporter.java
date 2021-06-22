@@ -1,5 +1,7 @@
 package fallen.pentagon.know2good;
 
+import org.bukkit.NamespacedKey;
+
 public class WorldTeleporter {
   private final Know2Good plugin;
   private int taskId;
@@ -17,13 +19,18 @@ public class WorldTeleporter {
     var overWorldAnchor = teleportConfig.getInt("overworld_anchor");
     var endAnchor = teleportConfig.getInt("end_anchor");
 
-    var overWorld = plugin.getServer().getWorlds().get(0);
-    var end = plugin.getServer().getWorlds().get(2);
+    var server = plugin.getServer();
+    var advancement = server.getAdvancement(NamespacedKey.minecraft("story/enter_the_end"));
 
-    taskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+    if (advancement == null) return;
+
+    var overWorld = server.getWorlds().get(0);
+    var end = server.getWorlds().get(2);
+
+    taskId = server.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
       overWorld.getPlayers().forEach(player -> {
         var location = player.getLocation();
-        if (location.getBlockY() > overWorldAnchor) {
+        if (location.getBlockY() > overWorldAnchor && player.getAdvancementProgress(advancement).isDone()) {
           var velocity = player.getVelocity().clone();
           var newLocation = location.clone();
           newLocation.setWorld(end);
@@ -35,7 +42,7 @@ public class WorldTeleporter {
 
       end.getPlayers().forEach(player -> {
         var location = player.getLocation();
-        if (location.getBlockY() < endAnchor) {
+        if (location.getBlockY() < endAnchor && player.getAdvancementProgress(advancement).isDone()) {
           var velocity = player.getVelocity().clone();
           var newLocation = location.clone();
           newLocation.setWorld(overWorld);
