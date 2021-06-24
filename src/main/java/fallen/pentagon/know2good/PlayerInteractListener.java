@@ -1,5 +1,6 @@
 package fallen.pentagon.know2good;
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,6 +11,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerInteractListener implements Listener {
   private final Know2Good plugin;
@@ -61,7 +64,20 @@ public class PlayerInteractListener implements Listener {
           .forEach(cmd -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd));
 
         if (itemConfig.getBoolean("consume")) {
-          item.setAmount(item.getAmount() - 1);
+          if (itemConfig.contains("usages")) {
+            int maxUsages = itemConfig.getInt("usages");
+            PersistentDataContainer data = meta.getPersistentDataContainer();
+            int usages = data.getOrDefault(new NamespacedKey(plugin, "usages"), PersistentDataType.INTEGER, maxUsages);
+            usages--;
+            if (usages <= 0) {
+              item.setAmount(item.getAmount() - 1);
+            } else {
+              data.set(new NamespacedKey(plugin, "usages"), PersistentDataType.INTEGER, usages);
+              item.setItemMeta(meta);
+            }
+          } else {
+            item.setAmount(item.getAmount() - 1);
+          }
         }
       }
     });
