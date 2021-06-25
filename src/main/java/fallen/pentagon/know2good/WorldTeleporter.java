@@ -24,8 +24,10 @@ public class WorldTeleporter {
 
     if (advancement == null) return;
 
-    var overWorld = server.getWorlds().get(0);
-    var end = server.getWorlds().get(2);
+    var worlds = server.getWorlds();
+    if (worlds.size() < 3) return;
+    var overWorld = worlds.get(0);
+    var end = worlds.get(2);
 
     taskId = server.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
       overWorld.getPlayers().forEach(player -> {
