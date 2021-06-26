@@ -21,5 +21,6 @@ items:
     trigger: right_click
     name: Teleportation Totem
     uses: 5
+    lore: "§bUses remaining: {{uses}}"
     commands:
       - execute as {{player}} in minecraft:overworld run tp 0 64 0

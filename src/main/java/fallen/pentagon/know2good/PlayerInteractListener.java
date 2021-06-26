@@ -14,6 +14,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Collections;
+
 public class PlayerInteractListener implements Listener {
   private final Know2Good plugin;
 
@@ -77,7 +79,26 @@ public class PlayerInteractListener implements Listener {
           int maxUses = itemConfig.getInt("uses");
           PersistentDataContainer data = meta.getPersistentDataContainer();
           int uses = data.getOrDefault(new NamespacedKey(plugin, "uses"), PersistentDataType.INTEGER, maxUses);
+
+          var lore = itemConfig.getString("lore");
+          if (lore != null) {
+            var oldLore = lore.replace("{{uses}}", Integer.toString(uses));
+            var newLore = lore.replace("{{uses}}", Integer.toString(uses - 1));
+            var loreLines = meta.getLore();
+            if (loreLines == null) {
+              var list = Collections.singletonList(newLore);
+              meta.setLore(list);
+            } else if (loreLines.contains(oldLore)) {
+              loreLines.set(loreLines.indexOf(oldLore), newLore);
+              meta.setLore(loreLines);
+            } else {
+              loreLines.add(newLore);
+              meta.setLore(loreLines);
+            }
+          }
+
           uses--;
+
           if (consume && uses <= 0) {
             item.setAmount(item.getAmount() - 1);
           } else {
