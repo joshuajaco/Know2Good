@@ -57,27 +57,35 @@ public class PlayerInteractListener implements Listener {
       if (meta.getDisplayName().contains(name)) {
         event.setCancelled(true);
 
+        var hasUses = itemConfig.contains("uses");
+
+        if (hasUses) {
+          PersistentDataContainer data = meta.getPersistentDataContainer();
+          int uses = data.getOrDefault(new NamespacedKey(plugin, "uses"), PersistentDataType.INTEGER, 1);
+          if (uses <= 0) return;
+        }
+
         itemConfig
           .getStringList("commands")
           .stream()
           .map(cmd -> cmd.replace("{{player}}", player.getName()))
           .forEach(cmd -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd));
 
-        if (itemConfig.getBoolean("consume")) {
-          if (itemConfig.contains("usages")) {
-            int maxUsages = itemConfig.getInt("usages");
-            PersistentDataContainer data = meta.getPersistentDataContainer();
-            int usages = data.getOrDefault(new NamespacedKey(plugin, "usages"), PersistentDataType.INTEGER, maxUsages);
-            usages--;
-            if (usages <= 0) {
-              item.setAmount(item.getAmount() - 1);
-            } else {
-              data.set(new NamespacedKey(plugin, "usages"), PersistentDataType.INTEGER, usages);
-              item.setItemMeta(meta);
-            }
-          } else {
+        var consume = itemConfig.getBoolean("consume");
+
+        if (hasUses) {
+          int maxUses = itemConfig.getInt("uses");
+          PersistentDataContainer data = meta.getPersistentDataContainer();
+          int uses = data.getOrDefault(new NamespacedKey(plugin, "uses"), PersistentDataType.INTEGER, maxUses);
+          uses--;
+          if (consume && uses <= 0) {
             item.setAmount(item.getAmount() - 1);
+          } else {
+            data.set(new NamespacedKey(plugin, "uses"), PersistentDataType.INTEGER, uses);
+            item.setItemMeta(meta);
           }
+        } else if (consume) {
+          item.setAmount(item.getAmount() - 1);
         }
       }
     });

@@ -17,9 +17,9 @@ items:
       - execute as {{player}} in minecraft:overworld run tp 0 64 0
       - say {{player}} teleported to spawn
   knowledge_book:
-    consume: true
+    consume: false
     trigger: right_click
     name: Teleportation Totem
-    usages: 5
+    uses: 5
     commands:
       - execute as {{player}} in minecraft:overworld run tp 0 64 0
